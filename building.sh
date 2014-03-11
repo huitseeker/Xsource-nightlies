@@ -64,7 +64,7 @@ SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-librar
 
 # The scalac script f#$%* up and adds its scala library on cp if
 # the cp is left empty, even with -nobootcp
-
+# See SI-8368
 sed -ir "/^.*-Dscala\.usejavacp=true.*/d" $TMPDIR/$SCALA_211_DIR/bin/scalac
 
 if [[ $(basename `pwd`) == "framework" ]]; then
@@ -81,12 +81,10 @@ if [[ $(basename `pwd`) == "framework" ]]; then
     perl -pi.bak -e 's/(.*\.scala)\1/$1/g' $TMPDIR/compilationscript.sh
 
     # I have to add reflect to the classpath, because of Quasiquotes
-    # hot call :(
-    # sed -ir  "s|-classpath |-classpath `pwd`/$TMPDIR/$SCALA_211_DIR/lib/scala-reflect.jar:|g" $TMPDIR/compilationscript.sh
+    # hot call :( See SI-8392
+    sed -ir  "s|-classpath |-classpath `pwd`/$TMPDIR/$SCALA_211_DIR/lib/scala-reflect.jar:|g" $TMPDIR/compilationscript.sh
 fi
 
-# remove scala-reflect from the cp
-# sed -r  "s|(-classpath .*):.*?scala-reflect-$SCALA_VERSION\.jar|\1|g" $TMPDIR/compilationscript.sh > $TMPDIR/compilationscript-without-reflect.sh
 # remove library from the bootcp
 sed -r  "s|(-bootclasspath .*):.*?scala-library-$SCALA_VERSION\.jar|\1|g" $TMPDIR/compilationscript.sh > $TMPDIR/compilationscript-without-bootcplib.sh
 
