@@ -27,28 +27,29 @@ sbt-0.13.0 'export compile' |grep -Ee '^scalac' >> $TMPDIR/compilationscript.sh
 
 # The old process to download a scala 2.11 nightly : scala-dist
 
-# pushd $TMPDIR
-# wget https://github.com/scala/scala-dist/archive/master.zip
-# unzip master.zip && rm master.zip
-# mv scala-dist-master scala-dist
-# cd scala-dist
-# sbt-0.13.0 'set version := "2.11.0-RC1"' 'set resolvers += "private-repo" at "http://private-repo.typesafe.com/typesafe/scala-release-temp/"' universal:package-bin
-# cd target/universal && unzip scala-2.11.0-RC1.zip
-# popd
-# export
-# PATH=$TMPDIR/scala-dist/target/universal/scala-2.11.0-RC1/bin:$PATH
+pushd $TMPDIR
+wget https://github.com/scala/scala-dist/archive/master.zip
+unzip master.zip && rm master.zip
+mv scala-dist-master scala-dist
+SCALA_211_DIR=scala-dist/target/universal/scala-2.11.0-SNAPSHOT
+export PATH=`pwd`/$SCALA_211_DIR/bin:$PATH
+cd scala-dist
+sbt-0.13.0 'set version := "2.11.0-SNAPSHOT"' 'set resolvers += "private-repo" at "http://private-repo.typesafe.com/typesafe/scala-release-temp/"' universal:package-bin
+cd target/universal && unzip scala-2.11.0-SNAPSHOT.zip
+popd
 
 # The new process: just find the latest file from the download page
 
-# this depends on the antechronological listing on that page. So be it
-pushd $TMPDIR
-SCALA_NIGHTLY_NAME=$(wget -q -O - http://www.scala-lang.org/files/archive/nightly/distributions/ |  perl -lne 'if (/scala-2.11.0[^\"]*?.zip/){print $&; exit}' )
-wget -q "http://www.scala-lang.org/files/archive/nightly/distributions/$SCALA_NIGHTLY_NAME"
-unzip $SCALA_NIGHTLY_NAME && rm $SCALA_NIGHTLY_NAME
-SCALA_211_DIR=${SCALA_NIGHTLY_NAME%.zip}
-chmod +x $SCALA_211_DIR/bin/*
-export PATH=`pwd`/$SCALA_211_DIR/bin:$PATH
-popd
+# # this depends on the antechronological listing on that page. So be it
+# pushd $TMPDIR
+# SCALA_NIGHTLY_NAME=$(wget -q -O -
+#     http://www.scala-lang.org/files/archive/nightly/distributions/ |  perl -lne 'if (/scala-2.11.0[^\"]*?.zip/){print $&; exit}' )
+# wget -q "http://www.scala-lang.org/files/archive/nightly/distributions/$SCALA_NIGHTLY_NAME"
+# unzip $SCALA_NIGHTLY_NAME && rm $SCALA_NIGHTLY_NAME
+# SCALA_211_DIR=${SCALA_NIGHTLY_NAME%.zip}
+# chmod +x $SCALA_211_DIR/bin/*
+# export PATH=`pwd`/$SCALA_211_DIR/bin:$PATH
+# popd
 
 # Check : now this precise fresh scala 2.11 should be on the path
 GREPEE=$($TMPDIR/$SCALA_211_DIR/bin/scala -version 2>&1 |grep -Eoe "2.11.0[^\ ]*")
