@@ -62,6 +62,7 @@ wget "http://scala-lang.org/files/archive/scala-$SCALA_VERSION.tgz"
 tar xzvf scala-$SCALA_VERSION.tgz && rm scala-$SCALA_VERSION.tgz
 popd
 SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-library*" -printf "%p:")
+SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-reflect*" -printf "%p:")$SCALA_LIB_STR
 
 # The scalac script f#$%* up and adds its scala library on cp if
 # the cp is left empty, even with -nobootcp
@@ -69,10 +70,10 @@ SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-librar
 sed -ir "/^.*-Dscala\.usejavacp=true.*/d" $TMPDIR/$SCALA_211_DIR/bin/scalac
 
 if [[ $(basename `pwd`) == "framework" ]]; then
-    # for i in $(grep -lirc "`pwd`/src" --include="*\.scala" -Ee "scala\.reflect\.macros")
-    # do
-    #     sed -ir "s|$i||g" $TMPDIR/compilationscript.sh
-    # done
+    for i in $(grep -lirc "`pwd`/src" --include="*\.scala" -Ee "scala\.reflect\.macros")
+    do
+        sed -ir "s|$i||g" $TMPDIR/compilationscript.sh
+    done
     # no stinky macroes !
     sed -ir "s|$(find `pwd` -name "PlaySettings.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     sed -ir "s|$(find `pwd` -name "PlayEclipse.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
@@ -80,10 +81,6 @@ if [[ $(basename `pwd`) == "framework" ]]; then
     sed -ir "s|$(find `pwd` -name "Project.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     # remove duplicate same-line sources
     perl -pi.bak -e 's/(.*\.scala)\1/$1/g' $TMPDIR/compilationscript.sh
-
-    # I have to add reflect to the classpath, because of Quasiquotes
-    # hot call :( See SI-8392
-    sed -ir  "s|-classpath |-classpath `pwd`/$TMPDIR/$SCALA_211_DIR/lib/scala-reflect.jar:|g" $TMPDIR/compilationscript.sh
 fi
 
 # remove library from the bootcp
