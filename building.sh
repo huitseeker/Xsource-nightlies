@@ -70,11 +70,9 @@ SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-reflec
 sed -ir "/^.*-Dscala\.usejavacp=true.*/d" $TMPDIR/$SCALA_211_DIR/bin/scalac
 
 if [[ $(basename `pwd`) == "framework" ]]; then
-    for i in $(grep -lirc "`pwd`/src" --include="*\.scala" -Ee "scala\.reflect\.macros")
-    do
-        sed -ir "s|$i||g" $TMPDIR/compilationscript.sh
-    done
     # no stinky macroes !
+    sed -ir "s|$(find `pwd` -name "JsMacroImpl.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
+    sed -ir "s|$(find `pwd` -name "Json.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     sed -ir "s|$(find `pwd` -name "PlaySettings.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     sed -ir "s|$(find `pwd` -name "PlayEclipse.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     sed -ir "s|$(find `pwd` -name "PlayCommands.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
