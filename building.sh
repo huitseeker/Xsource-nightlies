@@ -70,13 +70,8 @@ SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-reflec
 sed -ir "/^.*-Dscala\.usejavacp=true.*/d" $TMPDIR/$SCALA_211_DIR/bin/scalac
 
 if [[ $(basename `pwd`) == "framework" ]]; then
-    # no stinky macroes !
-    sed -ir "s|$(find `pwd` -name "JsMacroImpl.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
+    # no macros !
     sed -ir "s|$(find `pwd` -name "Json.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
-    sed -ir "s|$(find `pwd` -name "PlaySettings.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
-    sed -ir "s|$(find `pwd` -name "PlayEclipse.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
-    sed -ir "s|$(find `pwd` -name "PlayCommands.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
-    sed -ir "s|$(find `pwd` -name "Project.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     # remove duplicate same-line sources
     perl -pi.bak -e 's/(.*\.scala)\1/$1/g' $TMPDIR/compilationscript.sh
 fi
@@ -87,7 +82,7 @@ sed -r  "s|(-bootclasspath .*):.*?scala-library-$SCALA_VERSION\.jar|\1|g" $TMPDI
 
 SCALAC="$(pwd)/$TMPDIR/$SCALA_211_DIR/bin/scalac"
 # modify script inline to pass options to scala compiler
-sed -ir "s|scalac|$SCALAC -nobootcp -Dscala.usejavacp=false -Xsource:2.10 -Ystop-after:typer -Ylog-classpath|" $TMPDIR/compilationscript-without-bootcplib.sh
+sed -ir "s|scalac|$SCALAC -nobootcp -Dscala.usejavacp=false -Xsource:2.10 -Ystop-after:typer -Ylog-classpath -Ymacro-expand:none|" $TMPDIR/compilationscript-without-bootcplib.sh
 
 # the space here in the pattern is important
 sed -r "s|(scalac.*?-classpath) |\1 $SCALA_LIB_STR|" $TMPDIR/compilationscript-without-bootcplib.sh > $TMPDIR/compilationscript-withlibrary.sh
