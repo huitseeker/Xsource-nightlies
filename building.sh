@@ -70,8 +70,6 @@ SCALA_LIB_STR=$(find `pwd`/$TMPDIR/scala-$SCALA_VERSION/lib -iname "scala-reflec
 sed -ir "/^.*-Dscala\.usejavacp=true.*/d" $TMPDIR/$SCALA_211_DIR/bin/scalac
 
 if [[ $(basename `pwd`) == "framework" ]]; then
-    # no macros !
-    sed -ir "s|$(find `pwd` -name "Json.scala" -printf %p)||g" $TMPDIR/compilationscript.sh
     # remove duplicate same-line sources
     perl -pi.bak -e 's/(.*\.scala)\1/$1/g' $TMPDIR/compilationscript.sh
 fi
