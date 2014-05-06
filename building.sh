@@ -14,7 +14,7 @@ cat > ~/.sbt/repositories <<EOF
   mavenLocal: file:///home/huitseeker/Scala/m2repo
 EOF
 
-export JAVA_OPTS="-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseGCOverheadLimit"
+export JAVA_OPTS="-XX:+UseParallelGC -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit"
 # create classfiles - a higher version number does not work for Play,
 # since with 2.10.4-RCs, dependencies have not been rebuilt
 sbt-0.13.0 'set every scalaVersion:="2.10.4"' compile
