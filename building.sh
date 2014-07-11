@@ -30,9 +30,9 @@ sbt-0.13.0 'export compile' |grep -Ee '^scalac' >> $TMPDIR/compilationscript.sh
 # The old process to download a scala 2.11 nightly : scala-dist
 
 pushd $TMPDIR
-wget https://github.com/scala/scala-dist/archive/master.zip
-unzip master.zip && rm master.zip
-mv scala-dist-master scala-dist
+wget https://github.com/scala/scala-dist/archive/2.11.x.zip
+unzip 2.11.x.zip && rm 2.11.x.zip
+mv scala-dist-2.11.x scala-dist
 SCALA_211_DIR=scala-dist/target/universal/scala-2.11.2-SNAPSHOT
 export PATH=`pwd`/$SCALA_211_DIR/bin:$PATH
 cd scala-dist
@@ -54,8 +54,8 @@ popd
 # popd
 
 # Check : now this precise fresh scala 2.11 should be on the path
-GREPEE=$($TMPDIR/$SCALA_211_DIR/bin/scala -version 2>&1 |grep -Eoe "2.11.1[^\ ]*")
-if [[ $(scala -version 2>&1 | grep -Eoe "2.11.1[^\ ]*") != "$GREPEE" ]]; then echo "Couldn't put scala on path" && exit 2; fi
+GREPEE=$($TMPDIR/$SCALA_211_DIR/bin/scala -version 2>&1 |grep -Eoe "2.11.[^\ ]*")
+if [[ $(scala -version 2>&1 | grep -Eoe "2.11.[^\ ]*") != "$GREPEE" ]]; then echo "Couldn't put scala on path" && exit 2; fi
 
 # protect the nightly and instrument it with a 2.10 library
 SCALA_VERSION="2.10.4-RC2"
