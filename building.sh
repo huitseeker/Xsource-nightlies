@@ -33,11 +33,11 @@ pushd $TMPDIR
 wget https://github.com/scala/scala-dist/archive/2.11.x.zip
 unzip 2.11.x.zip && rm 2.11.x.zip
 mv scala-dist-2.11.x scala-dist
-SCALA_211_DIR=scala-dist/target/universal/scala-2.11.3-SNAPSHOT
+SCALA_211_DIR=scala-dist/target/universal/scala-2.11.5-SNAPSHOT
 export PATH=`pwd`/$SCALA_211_DIR/bin:$PATH
 cd scala-dist
-sbt-0.13.0 'set version := "2.11.3-SNAPSHOT"' 'set resolvers += "private-repo" at "http://private-repo.typesafe.com/typesafe/scala-release-temp/"' universal:package-bin
-cd target/universal && unzip scala-2.11.3-SNAPSHOT.zip
+sbt-0.13.0 'set version := "2.11.5-SNAPSHOT"' 'set resolvers += "private-repo" at "http://private-repo.typesafe.com/typesafe/scala-release-temp/"' universal:package-bin
+cd target/universal && unzip scala-2.11.5-SNAPSHOT.zip
 popd
 
 # The new process: just find the latest file from the download page
